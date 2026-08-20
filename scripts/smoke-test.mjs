@@ -26,6 +26,43 @@ async function waitFor(url) {
 await waitFor(`${backendUrl}/api/health`);
 await waitFor(frontendUrl);
 
+const fixtureResponse = await fetch(
+  `${backendUrl}/api/downloads/upload-fixture`,
+);
+if (!fixtureResponse.ok) {
+  throw new Error(
+    `Round-trip fixture returned HTTP ${fixtureResponse.status}`,
+  );
+}
+
+const fixtureBytes = Buffer.from(await fixtureResponse.arrayBuffer());
+const fixtureSha256 = createHash('sha256').update(fixtureBytes).digest('hex');
+const roundTripFormData = new FormData();
+roundTripFormData.append(
+  'file',
+  new Blob([fixtureBytes], { type: 'text/csv' }),
+  'upload-round-trip.csv',
+);
+
+const roundTripUploadResponse = await fetch(
+  `${backendUrl}/api/uploads/single`,
+  { method: 'POST', body: roundTripFormData },
+);
+const roundTripUploadBody = await roundTripUploadResponse.json();
+const roundTripUpload = roundTripUploadBody.files?.[0];
+
+if (
+  !roundTripUploadResponse.ok ||
+  roundTripUpload?.originalName !== 'upload-round-trip.csv' ||
+  roundTripUpload?.mimeType !== 'text/csv' ||
+  roundTripUpload?.size !== fixtureBytes.length ||
+  roundTripUpload?.sha256 !== fixtureSha256
+) {
+  throw new Error(
+    `Unexpected round-trip upload response: ${JSON.stringify(roundTripUploadBody)}`,
+  );
+}
+
 const content = 'browser-agent-upload-smoke-test\n';
 const expectedSha256 = createHash('sha256').update(content).digest('hex');
 const formData = new FormData();
@@ -58,5 +95,5 @@ if (
 }
 
 process.stdout.write(
-  `Smoke test passed: frontend, backend, and multipart upload are healthy.\n`,
+  `Smoke test passed: frontend, backend, multipart upload, and download/upload round-trip are healthy.\n`,
 );
