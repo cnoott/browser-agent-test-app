@@ -65,6 +65,7 @@ Open `http://localhost:5173/uploads`.
 
 | Scenario | Input or target selector | Submit selector | Result selector |
 | --- | --- | --- | --- |
+| Download then upload | `#roundtrip-file-download`, then `#roundtrip-file-input` | `#roundtrip-file-submit` | `#roundtrip-file-result` |
 | Visible native input | `#visible-file-input` | `#visible-file-submit` | `#visible-file-result` |
 | Button-triggered chooser | `#hidden-file-trigger` | `#hidden-file-submit` | `#hidden-file-result` |
 | Multiple native files | `#multiple-file-input` | `#multiple-file-submit` | `#multiple-file-result` |
@@ -72,6 +73,7 @@ Open `http://localhost:5173/uploads`.
 
 Upload endpoints:
 
+- `GET /api/downloads/upload-fixture` — deterministic `upload-round-trip.csv` fixture
 - `POST /api/uploads/single` — one file in the `file` multipart field
 - `POST /api/uploads/multiple` — up to ten files in the `files` multipart field
 - `GET /api/uploads/health` — upload service readiness and limits

@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
+const uploadRoundTripFixture =
+  'record_id,name,status\n1,Example Record,ready\n';
+
 // Sample data for generating files
 const generateSampleCSV = (rows: number = 1000): string => {
   let csv = 'ID,Name,Email,Department,Salary,Date\n';
@@ -70,6 +73,17 @@ startxref
 };
 
 // Instant download endpoints
+router.get('/upload-fixture', (_req, res) => {
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="upload-round-trip.csv"',
+  );
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Length', Buffer.byteLength(uploadRoundTripFixture));
+
+  res.send(uploadRoundTripFixture);
+});
+
 router.get('/sample-csv', (req, res) => {
   const rows = parseInt(req.query.rows as string) || 1000;
   const csv = generateSampleCSV(rows);

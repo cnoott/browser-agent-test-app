@@ -136,6 +136,7 @@ function ScenarioCard({
 }
 
 export const FileUploadsPage: React.FC = () => {
+  const roundTrip = useUploadState();
   const visible = useUploadState();
   const hidden = useUploadState();
   const multiple = useUploadState();
@@ -157,6 +158,45 @@ export const FileUploadsPage: React.FC = () => {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <ScenarioCard
+          title="Download and upload round-trip"
+          description="Download the deterministic CSV fixture, then select that downloaded file and upload it back."
+        >
+          <a
+            id="roundtrip-file-download"
+            data-testid="roundtrip-file-download"
+            href={`${API_BASE_URL}/api/downloads/upload-fixture`}
+            download
+            className="inline-block rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-700"
+          >
+            Download upload fixture
+          </a>
+          <input
+            id="roundtrip-file-input"
+            data-testid="roundtrip-file-input"
+            type="file"
+            accept=".csv,text/csv"
+            onChange={(event) =>
+              roundTrip.selectFiles(
+                Array.from(event.currentTarget.files ?? []),
+              )
+            }
+            className="block w-full rounded-lg border border-gray-300 p-2 text-sm"
+          />
+          <FileList files={roundTrip.state.files} />
+          <button
+            id="roundtrip-file-submit"
+            data-testid="roundtrip-file-submit"
+            type="button"
+            disabled={roundTrip.state.loading}
+            onClick={() => void roundTrip.submit(false)}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {roundTrip.state.loading ? 'Uploading…' : 'Upload downloaded file'}
+          </button>
+          <Result id="roundtrip-file-result" result={roundTrip.state.result} />
+        </ScenarioCard>
+
         <ScenarioCard
           title="Visible native file input"
           description="Use the input element directly, then click Submit upload."
