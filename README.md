@@ -35,7 +35,7 @@ In another terminal, verify the complete setup:
 npm run smoke
 ```
 
-The smoke test waits for both services and verifies a real in-memory multipart upload, including filename, MIME type, byte count, and SHA-256 digest.
+The smoke test waits for both services, verifies deterministic valid and invalid logins, and verifies a real in-memory multipart upload including filename, MIME type, byte count, and SHA-256 digest.
 
 ## Cursor Cloud Agent setup
 
@@ -123,6 +123,29 @@ The local SQLite database is initialized and seeded by `npm run setup`. The Curs
 | Standard user | `testuser` | `user123` |
 
 These credentials are deliberately public and local-only.
+
+### Credential-validation fixture
+
+The `/login` page is suitable for deterministic login-agent validation. Use
+`testuser` / `user123` for the success path and any other password for the
+failure path. A successful remembered login creates both browser storage and an
+HTTP-only `authToken` cookie. The cross-origin fixture requests opt into
+credential handling so the browser actually retains that cookie.
+
+The backend only permits the configured `FRONTEND_URL` origin (default
+`http://localhost:5173`) for credentialed requests; set that variable when
+hosting the frontend on another origin.
+
+Stable automation selectors:
+
+| Purpose | Selector |
+| --- | --- |
+| Login form | `#credential-validation-login-form` |
+| Username | `#username` |
+| Password | `#password` |
+| Submit | `#credential-validation-submit` |
+| Invalid-credential error | `#credential-validation-error` |
+| Authenticated success marker | `#credential-validation-success` |
 
 ## Commands
 

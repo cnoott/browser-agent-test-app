@@ -174,7 +174,12 @@ export const HomePage: React.FC = () => {
             and error conditions.
           </p>
           {user && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <div
+              id="credential-validation-success"
+              data-testid="credential-validation-success"
+              data-authenticated-username={user.username}
+              className="mt-6 p-4 bg-blue-50 rounded-lg"
+            >
               <p className="text-blue-800">
                 Welcome back, <strong>{user.username}</strong>!
                 {user.role === "admin" && (
