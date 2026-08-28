@@ -147,9 +147,19 @@ export const LoginPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Sign In</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          id="credential-validation-login-form"
+          data-testid="credential-validation-login-form"
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-4">
+            <div
+              id="credential-validation-error"
+              data-testid="credential-validation-error"
+              role="alert"
+              className="bg-red-50 border border-red-200 rounded-md p-4"
+            >
               <div className="flex">
                 <div className="flex-shrink-0">
                   <span className="text-red-400">⚠️</span>
@@ -168,6 +178,7 @@ export const LoginPage: React.FC = () => {
             </label>
             <input
               id="username"
+              data-testid="credential-validation-username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -183,6 +194,7 @@ export const LoginPage: React.FC = () => {
             </label>
             <input
               id="password"
+              data-testid="credential-validation-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -221,6 +233,8 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <button
+            id="credential-validation-submit"
+            data-testid="credential-validation-submit"
             type="submit"
             disabled={isLoading}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-2 px-4 rounded-md transition-colors flex items-center justify-center"

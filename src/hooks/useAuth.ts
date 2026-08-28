@@ -28,6 +28,7 @@ export const useAuthProvider = (): AuthContextType => {
   const fetchCurrentUser = async (token: string) => {
     try {
       const response = await fetch('http://localhost:3001/api/auth/me', {
+        credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -52,6 +53,7 @@ export const useAuthProvider = (): AuthContextType => {
     try {
       const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -79,6 +81,7 @@ export const useAuthProvider = (): AuthContextType => {
     try {
       const response = await fetch('http://localhost:3001/api/auth/register', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

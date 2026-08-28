@@ -26,6 +26,46 @@ async function waitFor(url) {
 await waitFor(`${backendUrl}/api/health`);
 await waitFor(frontendUrl);
 
+const validLoginResponse = await fetch(`${backendUrl}/api/auth/login`, {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({
+    username: 'testuser',
+    password: 'user123',
+    rememberMe: true,
+  }),
+});
+const validLoginBody = await validLoginResponse.json();
+if (
+  !validLoginResponse.ok ||
+  validLoginBody.success !== true ||
+  validLoginBody.data?.user?.username !== 'testuser' ||
+  !validLoginResponse.headers.get('set-cookie')?.includes('authToken=')
+) {
+  throw new Error(
+    `Unexpected valid-login response: ${JSON.stringify(validLoginBody)}`,
+  );
+}
+
+const invalidLoginResponse = await fetch(`${backendUrl}/api/auth/login`, {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({
+    username: 'testuser',
+    password: 'definitely-invalid',
+  }),
+});
+const invalidLoginBody = await invalidLoginResponse.json();
+if (
+  invalidLoginResponse.status !== 401 ||
+  invalidLoginBody.success !== false ||
+  invalidLoginBody.error !== 'Invalid credentials'
+) {
+  throw new Error(
+    `Unexpected invalid-login response: ${JSON.stringify(invalidLoginBody)}`,
+  );
+}
+
 const fixtureResponse = await fetch(
   `${backendUrl}/api/downloads/upload-fixture`,
 );
@@ -95,5 +135,5 @@ if (
 }
 
 process.stdout.write(
-  `Smoke test passed: frontend, backend, multipart upload, and download/upload round-trip are healthy.\n`,
+  `Smoke test passed: frontend, backend, valid/invalid login, multipart upload, and download/upload round-trip are healthy.\n`,
 );

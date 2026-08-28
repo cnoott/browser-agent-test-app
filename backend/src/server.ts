@@ -14,12 +14,17 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 // Middleware
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
+app.use(
+  cors({
+    // Credentialed browser requests cannot use a wildcard origin. Keep this
+    // fixture deterministic while allowing callers to move the frontend port.
+    origin: frontendUrl,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
